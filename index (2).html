@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lexi – learn a language from your classes</title>
+  <meta name="description" content="Lexi turns the words and phrases from your language class into flashcards, quizzes and games, and reminds you to practise at your own pace.">
+  <meta name="theme-color" content="#FFF0EA">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <!-- ============ TOP BAR (desktop nav lives here) ============ -->
+  <header class="topbar">
+    <div class="topbar-row">
+      <a class="brand" href="#home" aria-label="Lexi, go to home">
+        <span class="brand-mark" aria-hidden="true">🌸</span><span class="brand-name">Lexi</span>
+      </a>
+
+      <!-- Quick add: top left -->
+      <form class="quick-add" id="quickAdd" autocomplete="off">
+        <label class="sr" for="quickWord">Add a new word from class</label>
+        <span class="quick-ico" data-icon="plus" aria-hidden="true"></span>
+        <input id="quickWord" type="text" placeholder="Add a new word from class…" maxlength="60">
+        <button type="submit" class="quick-go">Add</button>
+      </form>
+
+      <div class="top-right">
+        <a class="lang-pill" id="langPill" href="#globe" hidden></a>
+        <span class="chip" id="streakChip" title="Your practice streak"></span>
+        <a class="plan-pill" href="#plans" id="planPill">Free</a>
+      </div>
+    </div>
+
+    <nav class="topnav" aria-label="Main">
+      <a href="#home" data-route="home"><span data-icon="home" aria-hidden="true"></span>Home</a>
+      <a href="#practice" data-route="practice"><span data-icon="cards" aria-hidden="true"></span>Practice</a>
+      <a href="#progress" data-route="progress"><span data-icon="calendar" aria-hidden="true"></span>Progress</a>
+      <a href="#tutors" data-route="tutors"><span data-icon="pin" aria-hidden="true"></span>Find a tutor<span class="pro" title="Premium">★</span></a>
+      <a href="#friends" data-route="friends"><span data-icon="users" aria-hidden="true"></span>Friends<span class="pro" title="Premium">★</span></a>
+      <a href="#live" data-route="live"><span data-icon="video" aria-hidden="true"></span>Live classes<span class="pro" title="Premium">★</span></a>
+      <a href="#plans" data-route="plans"><span data-icon="star" aria-hidden="true"></span>Plans</a>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <div class="strip" id="strip" hidden></div>
+    <noscript><p class="card">Lexi needs JavaScript to run. Please turn it on and reload.</p></noscript>
+
+    <!-- ============ GLOBE (first page) ============ -->
+    <section class="screen globe-screen" id="screen-globe" hidden>
+      <p class="globe-brand"><span class="brand-mark" aria-hidden="true">🌸</span> Lexi</p>
+      <h1 tabindex="-1">Which language do you want to learn?</h1>
+      <p class="lead">Spin the globe and tap a country.</p>
+
+      <div class="globe-wrap" id="globeWrap">
+        <div class="bubbles" aria-hidden="true">
+          <i style="--s:11%;--x:1%;--y:6%;--c:#FFCFC5;--d:0s"></i>
+          <i style="--s:6%;--x:14%;--y:1%;--c:#BDEAE4;--d:-1.2s"></i>
+          <i style="--s:9%;--x:87%;--y:4%;--c:#E1D9FA;--d:-2.4s"></i>
+          <i style="--s:5%;--x:80%;--y:15%;--c:#FFEDB8;--d:-.6s"></i>
+          <i style="--s:10%;--x:0%;--y:84%;--c:#FFEDB8;--d:-3s"></i>
+          <i style="--s:5%;--x:12%;--y:93%;--c:#FFCFC5;--d:-1.8s"></i>
+          <i style="--s:12%;--x:87%;--y:85%;--c:#BDEAE4;--d:-.9s"></i>
+          <i style="--s:6%;--x:77%;--y:94%;--c:#E1D9FA;--d:-2.1s"></i>
+        </div>
+        <canvas id="globeCanvas" role="img" aria-label="Interactive globe. Tap a country to choose its language. You can also pick from the list below the globe."></canvas>
+        <div class="globe-tip" id="globeTip" hidden></div>
+      </div>
+      <div class="zoom-ctl" role="group" aria-label="Zoom the globe">
+        <button type="button" class="zoom-btn" id="zoomOut" aria-label="Zoom out">−</button>
+        <button type="button" class="zoom-btn wide" id="zoomReset" aria-label="Reset zoom">Reset</button>
+        <button type="button" class="zoom-btn" id="zoomIn" aria-label="Zoom in">+</button>
+      </div>
+      <p class="globe-info" id="globeInfo" aria-live="polite"></p>
+      <button class="btn primary" id="globeContinue" hidden></button>
+
+      <h2 class="h2 globe-list-title">Or choose from the list</h2>
+      <input type="search" id="globeSearch" class="globe-search" placeholder="Search a country or language" aria-label="Search a country or language" autocomplete="off">
+      <div class="globe-list" id="globeList"></div>
+    </section>
+
+    <!-- ============ HOME ============ -->
+    <section class="screen" id="screen-home" hidden>
+      <div class="hero">
+        <div class="hero-text">
+          <p class="eyebrow" id="greetDate"></p>
+          <h1 tabindex="-1" id="greetTitle">Hello!</h1>
+          <p class="course-line" id="courseLine"></p>
+          <p class="lead">Add what you learned in class and Lexi turns it into short, friendly practice, at a pace that suits you.</p>
+          <div class="hero-actions">
+            <button class="btn primary" data-open-add><span data-icon="plus" aria-hidden="true"></span>Add class vocab</button>
+            <a class="btn" href="#practice">Start practising</a>
+          </div>
+        </div>
+
+        <div class="goal-card" aria-live="polite">
+          <div class="ring-wrap">
+            <svg class="ring" viewBox="0 0 120 120" role="img" aria-label="Today's progress ring">
+              <circle class="ring-bg" cx="60" cy="60" r="52"/>
+              <circle class="ring-fg" id="ringFg" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+            </svg>
+            <div class="ring-text"><strong id="ringNum">0</strong><span id="ringOf">of 5</span></div>
+          </div>
+          <div>
+            <h2 class="h3">Today’s goal</h2>
+            <p class="muted" id="paceText"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="banner" id="reminderBanner" hidden role="status">
+        <span data-icon="bell" aria-hidden="true"></span>
+        <span>It’s practice time! A few minutes will keep your streak going.</span>
+        <a class="btn small primary" href="#practice">Let’s go</a>
+        <button class="btn small ghost" id="dismissBanner">Later</button>
+      </div>
+
+      <div class="grid-2">
+        <article class="card">
+          <div class="card-head">
+            <h2 class="h2">From your classes</h2>
+            <button class="btn small" data-open-add><span data-icon="plus" aria-hidden="true"></span>Add</button>
+          </div>
+          <p class="muted">Words with a <span class="word is-new">highlight</span> are new, so you know what to focus on.</p>
+          <ul class="word-list" id="homeWords"></ul>
+        </article>
+
+        <article class="card">
+          <h2 class="h2">Daily reminder</h2>
+          <p class="muted">A small nudge at the time you choose.</p>
+          <div class="reminder">
+            <label class="switch">
+              <input type="checkbox" id="remOn" role="switch">
+              <span class="track" aria-hidden="true"></span>
+              <span class="switch-label">Remind me every day</span>
+            </label>
+            <label class="time-field">
+              <span>At</span>
+              <input type="time" id="remTime" value="18:00">
+            </label>
+          </div>
+          <p class="fine" id="remNote">Prototype note: notifications appear while this tab is open, since there’s no server.</p>
+        </article>
+      </div>
+
+      <article class="card tip-card">
+        <span class="tip-ico" aria-hidden="true">💡</span>
+        <div><h2 class="h3">Good to know</h2><p id="tipText"></p></div>
+      </article>
+
+      <h2 class="h2 section-title">Pick a game</h2>
+      <div class="tiles tiles-compact">
+        <button class="tile t-coral" data-game="flash"><span class="tile-ico" data-icon="cards" aria-hidden="true"></span><span class="tile-name">Flashcards</span></button>
+        <button class="tile t-teal" data-game="quiz"><span class="tile-ico" data-icon="quiz" aria-hidden="true"></span><span class="tile-name">Quiz</span></button>
+        <button class="tile t-lilac" data-game="search"><span class="tile-ico" data-icon="grid" aria-hidden="true"></span><span class="tile-name">Word search</span></button>
+        <button class="tile t-sun" data-game="match"><span class="tile-ico" data-icon="link" aria-hidden="true"></span><span class="tile-name">Matching</span></button>
+      </div>
+
+      <h2 class="h2 section-title" id="stickerTitle"></h2>
+      <div class="sticker-sheet" id="stickerSheet"></div>
+    </section>
+
+    <!-- ============ PRACTICE ============ -->
+    <section class="screen" id="screen-practice" hidden>
+      <header class="screen-head">
+        <h1 tabindex="-1">Practice</h1>
+        <p class="lead">Pick a game. Each word you get right counts towards today’s goal.</p>
+      </header>
+
+      <div id="picker">
+        <div class="set-row" role="group" aria-label="Which words to practise">
+          <span class="muted">Practise:</span>
+          <button class="chip-btn" data-set="new" aria-pressed="true">New words</button>
+          <button class="chip-btn" data-set="all" aria-pressed="false">All my words</button>
+        </div>
+
+        <div class="tiles">
+          <button class="tile big t-coral" data-game="flash">
+            <span class="tile-ico" data-icon="cards" aria-hidden="true"></span>
+            <span class="tile-name">Flashcards</span>
+            <span class="tile-desc">Flip, think, then “got it” or “come back to it”.</span>
+            <span class="tile-play">Play</span>
+          </button>
+          <button class="tile big t-teal" data-game="quiz">
+            <span class="tile-ico" data-icon="quiz" aria-hidden="true"></span>
+            <span class="tile-name">Multiple choice</span>
+            <span class="tile-desc">Pick the right answer out of four.</span>
+            <span class="tile-play">Play</span>
+          </button>
+          <button class="tile big t-lilac" data-game="search">
+            <span class="tile-ico" data-icon="grid" aria-hidden="true"></span>
+            <span class="tile-name">Word search</span>
+            <span class="tile-desc">Find your words hidden in the grid.</span>
+            <span class="tile-play">Play</span>
+          </button>
+          <button class="tile big t-sun" data-game="match">
+            <span class="tile-ico" data-icon="link" aria-hidden="true"></span>
+            <span class="tile-name">Matching</span>
+            <span class="tile-desc">Match pictures with their words.</span>
+            <span class="tile-play">Play</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="stage" class="stage" hidden></div>
+    </section>
+
+    <!-- ============ PROGRESS ============ -->
+    <section class="screen" id="screen-progress" hidden>
+      <header class="screen-head">
+        <h1 tabindex="-1">Your progress</h1>
+        <p class="lead">Each day shows how many words you completed.</p>
+      </header>
+
+      <div class="stats" id="stats"></div>
+
+      <article class="card">
+        <div class="cal-head">
+          <button class="btn icon" id="calPrev" aria-label="Previous month"></button>
+          <h2 class="h2" id="calTitle" aria-live="polite"></h2>
+          <button class="btn icon" id="calNext" aria-label="Next month"></button>
+        </div>
+        <div class="cal" id="calendar" role="grid" aria-labelledby="calTitle"></div>
+        <p class="fine">Darker circles mean more words completed that day. Sample history is included so you can see how it looks.</p>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <h2 class="h2">All my words</h2>
+          <button class="btn small" data-open-add><span data-icon="plus" aria-hidden="true"></span>Add</button>
+        </div>
+        <ul class="word-list wide" id="allWords"></ul>
+      </article>
+
+      <p class="fine center"><button class="linklike" id="resetData">Reset demo data</button></p>
+    </section>
+
+    <!-- ============ FIND A TUTOR (premium) ============ -->
+    <section class="screen" id="screen-tutors" hidden>
+      <header class="screen-head">
+        <h1 tabindex="-1">Find a tutor <span class="badge-pro">★ Premium</span></h1>
+        <p class="lead">Tutors near you, for private classes in person or online.</p>
+      </header>
+
+      <div class="gate card" id="gate-tutors" hidden></div>
+
+      <div id="content-tutors" hidden>
+        <form class="filters card" id="tutorFilters">
+          <label>Language
+            <select id="fLang">
+              <option value="">Any</option><option>Spanish</option><option>Portuguese</option><option>French</option><option>English</option><option>Italian</option><option>German</option><option>Japanese</option><option>Korean</option><option>Chinese</option><option>Arabic</option>
+            </select>
+          </label>
+          <label>Max price: <output id="fPriceOut">€40</output>/hr
+            <input type="range" id="fPrice" min="10" max="40" step="1" value="40">
+          </label>
+          <label>Availability
+            <select id="fAvail">
+              <option value="">Any time</option><option value="today">Today</option><option value="evenings">Evenings</option><option value="weekend">Weekends</option>
+            </select>
+          </label>
+        </form>
+
+        <p class="muted" id="tutorCount" aria-live="polite"></p>
+
+        <div class="tutor-layout">
+          <div class="map-wrap">
+            <svg id="map" viewBox="0 0 720 460" role="group" aria-label="Map of tutors near you">
+              <rect width="720" height="460" fill="#FBF1E6"/>
+              <!-- parks -->
+              <rect x="420" y="170" width="150" height="130" rx="26" fill="#CFEBCB"/>
+              <rect x="40" y="300" width="120" height="90" rx="24" fill="#CFEBCB"/>
+              <rect x="560" y="340" width="110" height="80" rx="22" fill="#CFEBCB"/>
+              <!-- river -->
+              <path d="M-10 410 C 120 370, 200 440, 330 400 S 560 380, 740 430" fill="none" stroke="#BFE3F0" stroke-width="26" stroke-linecap="round"/>
+              <!-- roads -->
+              <g fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round">
+                <path d="M0 120 L720 160"/><path d="M0 260 L720 230"/><path d="M180 0 L220 460"/><path d="M380 0 L350 460"/><path d="M560 0 L600 460"/>
+              </g>
+              <g fill="none" stroke="#F4DCCB" stroke-width="5" stroke-linecap="round">
+                <path d="M0 190 L720 200"/><path d="M80 0 L110 460"/><path d="M470 0 L480 460"/>
+              </g>
+              <g class="map-labels" font-size="12" font-weight="700" fill="#8B6F78" text-anchor="middle">
+                <text x="495" y="238">Retiro</text><text x="100" y="352">Moncloa</text><text x="615" y="384">Park</text>
+                <text x="250" y="60">Malasaña</text><text x="420" y="60">Chamberí</text><text x="300" y="330">Lavapiés</text>
+              </g>
+              <!-- you are here -->
+              <g transform="translate(360 215)">
+                <circle r="16" fill="#4C8DF6" opacity=".18"/><circle r="7" fill="#4C8DF6" stroke="#fff" stroke-width="3"/>
+                <text y="28" text-anchor="middle" font-size="11" font-weight="800" fill="#3563B8">You</text>
+              </g>
+              <g id="pins"></g>
+            </svg>
+            <div class="legend"><span><i class="dot you"></i>You are here</span><span><i class="dot tutor"></i>Tutor (price per hour)</span></div>
+          </div>
+          <div class="tutor-list" id="tutorList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FRIENDS (premium) ============ -->
+    <section class="screen" id="screen-friends" hidden>
+      <header class="screen-head">
+        <h1 tabindex="-1">Friends <span class="badge-pro">★ Premium</span></h1>
+        <p class="lead">Learn alongside people at your level. Cheer each other on.</p>
+      </header>
+
+      <div class="gate card" id="gate-friends" hidden></div>
+
+      <div id="content-friends" hidden>
+        <div class="friends-layout">
+          <div>
+            <div class="card level-card">
+              <label>Your level
+                <select id="myLevel"><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option></select>
+              </label>
+              <form id="addFriend" class="add-friend">
+                <label class="sr" for="friendName">Add a friend by username</label>
+                <input id="friendName" type="text" placeholder="@username" maxlength="24" required>
+                <button class="btn small primary" type="submit">Add friend</button>
+              </form>
+            </div>
+            <ul class="friend-list" id="friendList"></ul>
+          </div>
+
+          <article class="card chat" aria-label="Messages">
+            <div class="chat-head" id="chatHead"></div>
+            <div class="chat-log" id="chatLog" role="log" aria-live="polite"></div>
+            <form id="chatForm" class="chat-form">
+              <label class="sr" for="chatInput">Type a message</label>
+              <input id="chatInput" type="text" placeholder="Write a message…" autocomplete="off" maxlength="200">
+              <button class="btn primary" type="submit">Send</button>
+            </form>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ LIVE CLASSES (premium) ============ -->
+    <section class="screen" id="screen-live" hidden>
+      <header class="screen-head">
+        <h1 tabindex="-1">Live classes <span class="badge-pro">★ Premium</span></h1>
+        <p class="lead">Small group lessons on Zoom. Book a spot and your link appears right here.</p>
+      </header>
+
+      <div class="gate card" id="gate-live" hidden></div>
+
+      <div id="content-live" hidden>
+        <div class="set-row" role="group" aria-label="Filter by language" id="liveFilter"></div>
+        <div class="live-grid" id="liveList"></div>
+      </div>
+    </section>
+
+    <!-- ============ PLANS ============ -->
+    <section class="screen" id="screen-plans" hidden>
+      <header class="screen-head center">
+        <h1 tabindex="-1">Learn your way</h1>
+        <p class="lead">Free covers your daily practice. Premium adds people and places.</p>
+        <div class="seg" role="group" aria-label="Billing period">
+          <button data-bill="monthly" aria-pressed="true">Monthly</button>
+          <button data-bill="yearly" aria-pressed="false">Yearly <span class="save">save 37%</span></button>
+        </div>
+      </header>
+
+      <div class="plan-grid">
+        <article class="card plan">
+          <h2 class="h2">Free</h2>
+          <p class="price-big">€0<small>/forever</small></p>
+          <ul class="ticks">
+            <li>Add vocab after every class</li>
+            <li>Flashcards, quiz, word search, matching</li>
+            <li>Daily reminders at your pace</li>
+            <li>Monthly progress calendar</li>
+          </ul>
+          <button class="btn" data-pick-plan="free">Stay on Free</button>
+        </article>
+        <article class="card plan featured">
+          <span class="ribbon">Most popular</span>
+          <h2 class="h2">Premium</h2>
+          <p class="price-big" id="premPrice">€7.99<small>/month</small></p>
+          <p class="fine" id="premSub">Billed monthly. Cancel any time.</p>
+          <ul class="ticks">
+            <li>Everything in Free</li>
+            <li>Location-based tutor finder</li>
+            <li>Private classes</li>
+            <li>Live Zoom lessons</li>
+            <li>Friends at your level, with messaging</li>
+          </ul>
+          <button class="btn primary" data-pick-plan="premium">Choose Premium</button>
+        </article>
+      </div>
+
+      <article class="card">
+        <h2 class="h2">Free vs Premium</h2>
+        <div class="table-wrap">
+          <table class="compare">
+            <caption class="sr">Comparison of the Free and Premium plans</caption>
+            <thead><tr><th scope="col">Feature</th><th scope="col">Free</th><th scope="col">Premium</th></tr></thead>
+            <tbody id="compareBody"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="card" id="signup">
+        <h2 class="h2">Sign up</h2>
+        <p class="muted">This is a prototype: no payment is taken and nothing leaves your browser.</p>
+        <form id="signupForm" class="form" novalidate>
+          <label>Your name
+            <input id="suName" type="text" autocomplete="name" required>
+            <span class="err" id="suNameErr" hidden>Please tell us your name.</span>
+          </label>
+          <label>Email
+            <input id="suEmail" type="email" autocomplete="email" required>
+            <span class="err" id="suEmailErr" hidden>Please enter a valid email.</span>
+          </label>
+          <fieldset class="radio-row">
+            <legend>Plan</legend>
+            <label><input type="radio" name="suPlan" value="free"> Free</label>
+            <label><input type="radio" name="suPlan" value="premium" checked> Premium</label>
+          </fieldset>
+          <button class="btn primary" type="submit">Create my account</button>
+        </form>
+        <div class="success" id="signupOk" role="status" hidden></div>
+      </article>
+    </section>
+  </main>
+
+  <!-- ============ BOTTOM NAV (phones) ============ -->
+  <nav class="bottomnav" aria-label="Main">
+    <a href="#home" data-route="home"><span data-icon="home" aria-hidden="true"></span><span>Home</span></a>
+    <a href="#practice" data-route="practice"><span data-icon="cards" aria-hidden="true"></span><span>Practice</span></a>
+    <a href="#progress" data-route="progress"><span data-icon="calendar" aria-hidden="true"></span><span>Progress</span></a>
+    <a href="#tutors" data-route="tutors"><span data-icon="pin" aria-hidden="true"></span><span>Tutors</span></a>
+    <button id="moreBtn" aria-haspopup="dialog"><span data-icon="more" aria-hidden="true"></span><span>More</span></button>
+  </nav>
+
+  <dialog id="moreSheet" class="sheet" aria-label="More">
+    <a href="#friends" data-route="friends"><span data-icon="users" aria-hidden="true"></span>Friends <span class="pro">★</span></a>
+    <a href="#live" data-route="live"><span data-icon="video" aria-hidden="true"></span>Live classes <span class="pro">★</span></a>
+    <a href="#plans" data-route="plans"><span data-icon="star" aria-hidden="true"></span>Plans</a>
+    <button class="btn ghost" id="closeMore">Close</button>
+  </dialog>
+
+  <!-- ============ ADD VOCAB DIALOG ============ -->
+  <dialog id="addDialog" class="modal" aria-labelledby="addTitle">
+    <form id="addForm" method="dialog" class="form">
+      <div class="modal-head">
+        <h2 class="h2" id="addTitle">Add new vocab</h2>
+        <button type="button" class="btn icon" id="addClose" aria-label="Close"></button>
+      </div>
+
+      <div class="seg" role="group" aria-label="How do you want to add words?">
+        <button type="button" data-mode="single" aria-pressed="true">One word</button>
+        <button type="button" data-mode="bulk" aria-pressed="false">Paste class notes</button>
+      </div>
+
+      <div id="modeSingle">
+        <label>Word or phrase
+          <input id="addTerm" type="text" maxlength="80" autocomplete="off" placeholder="e.g. la manzana">
+        </label>
+        <label>Meaning
+          <input id="addMeaning" type="text" maxlength="80" autocomplete="off" placeholder="e.g. apple">
+        </label>
+        <label>Example sentence <span class="opt-tag">optional</span>
+          <input id="addExample" type="text" maxlength="140" autocomplete="off">
+        </label>
+        <fieldset class="emoji-pick">
+          <legend>Picture <span class="opt-tag">optional, used in the matching game</span></legend>
+          <div id="emojiRow"></div>
+        </fieldset>
+      </div>
+
+      <div id="modeBulk" hidden>
+        <label>One per line, like <code>word = meaning</code>
+          <textarea id="addBulk" rows="7" placeholder="el perro = dog&#10;la leche = milk&#10;¿Dónde está el baño? = Where is the bathroom?"></textarea>
+        </label>
+      </div>
+
+      <p class="err" id="addErr" hidden></p>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" id="addCancel">Cancel</button>
+        <button type="submit" class="btn primary">Save words</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+  <script src="world.js"></script>
+  <script src="courses.js"></script>
+<script src="languages.js"></script>
+<script src="icons.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
